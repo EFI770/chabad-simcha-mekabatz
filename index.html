@@ -3,79 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="מקבץ סיפורי חב&quot;ד על מעלת השמחה – שיתוף בוואטסאפ" />
   <title>סיפורי שמחה – חב"ד</title>
   <style>
-    :root {
-      --parchment: #F3EAD6;
-      --ink: #1A1612;
-      --techelet: #2F4D6F;
-      --seal: #7A3333;
-      --card: #FFFEF8;
-      --muted: #5a5348;
-    }
+    :root { --parchment: #F3EAD6; --ink: #1A1612; --techelet: #2F4D6F; --seal: #7A3333; --card: #FFFEF8; --muted: #5a5348; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", "Heebo", "Rubik", Arial, sans-serif;
-      background: var(--parchment);
-      color: var(--ink);
-      line-height: 1.55;
-      min-height: 100dvh;
-    }
-    header {
-      background: var(--techelet);
-      color: #fff;
-      padding: 1rem 1.1rem 1.2rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 2px 10px rgba(0,0,0,.15);
-    }
-    header h1 { margin: 0 0 .35rem; font-size: 1.35rem; font-weight: 700; }
+    body { margin: 0; font-family: "Segoe UI", "Heebo", Arial, sans-serif; background: var(--parchment); color: var(--ink); line-height: 1.55; min-height: 100dvh; }
+    header { background: var(--techelet); color: #fff; padding: 1rem 1.1rem 1.2rem; position: sticky; top: 0; z-index: 10; }
+    header h1 { margin: 0 0 .35rem; font-size: 1.35rem; }
     header p { margin: 0; font-size: .9rem; opacity: .92; }
     .toolbar { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .85rem; }
-    input[type="search"] {
-      flex: 1; min-width: 160px; padding: .55rem .75rem;
-      border: none; border-radius: 8px; font-size: 1rem; direction: rtl;
-    }
-    .tag-btn {
-      background: rgba(255,255,255,.15); color: #fff;
-      border: 1px solid rgba(255,255,255,.35); border-radius: 999px;
-      padding: .35rem .7rem; font-size: .85rem; cursor: pointer;
-    }
+    input[type="search"] { flex: 1; min-width: 140px; padding: .55rem .75rem; border: none; border-radius: 8px; font-size: 1rem; direction: rtl; }
+    .tag-btn { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .35rem .7rem; font-size: .85rem; cursor: pointer; }
     .tag-btn.active { background: #fff; color: var(--techelet); }
     main { max-width: 720px; margin: 0 auto; padding: 1rem .9rem 5rem; }
     .count { font-size: .9rem; color: var(--muted); margin: 0 0 .75rem; }
-    .card {
-      background: var(--card); border: 1px solid #e5dcc8; border-radius: 12px;
-      padding: 1rem 1.05rem; margin-bottom: .85rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,.04);
-    }
+    .card { background: var(--card); border: 1px solid #e5dcc8; border-radius: 12px; padding: 1rem; margin-bottom: .85rem; }
     .card h2 { margin: 0 0 .4rem; font-size: 1.08rem; color: var(--seal); }
     .meta { font-size: .8rem; color: var(--muted); margin-bottom: .55rem; }
     .body { white-space: pre-wrap; font-size: .98rem; margin-bottom: .85rem; }
     .tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .75rem; }
-    .chip {
-      background: #ebe3d1; color: var(--techelet); font-size: .75rem;
-      padding: .15rem .5rem; border-radius: 6px;
-    }
+    .chip { background: #ebe3d1; color: var(--techelet); font-size: .75rem; padding: .15rem .5rem; border-radius: 6px; }
     .actions { display: flex; gap: .45rem; flex-wrap: wrap; }
-    button.action, a.action {
-      flex: 1; min-width: 100px; padding: .55rem .55rem; border: none;
-      border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer;
-      text-align: center; text-decoration: none; display: inline-block;
-    }
+    button.action, a.action { flex: 1; min-width: 90px; padding: .55rem; border: none; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
     .wa { background: #25D366; color: #fff; }
     .copy { background: var(--techelet); color: #fff; }
     .src { background: var(--seal); color: #fff; }
     .src.disabled { background: #b8a99a; pointer-events: none; opacity: .65; }
-    .toast {
-      position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
-      background: var(--ink); color: #fff; padding: .55rem 1rem;
-      border-radius: 999px; font-size: .9rem; opacity: 0; pointer-events: none;
-      transition: opacity .25s; z-index: 20;
-    }
+    .toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: .55rem 1rem; border-radius: 999px; font-size: .9rem; opacity: 0; transition: opacity .25s; z-index: 20; }
     .toast.show { opacity: 1; }
     footer { text-align: center; font-size: .8rem; color: var(--muted); padding: 1rem; }
     footer a { color: var(--techelet); }
@@ -86,7 +40,7 @@
     <h1>סיפורי שמחה – חב"ד</h1>
     <p>מקבץ מקורות על מעלת השמחה · שיתוף בוואטסאפ</p>
     <div class="toolbar">
-      <input type="search" id="q" placeholder="חיפוש בסיפורים..." autocomplete="off" />
+      <input type="search" id="q" placeholder="חיפוש..." autocomplete="off" />
       <button type="button" class="tag-btn active" data-tag="">הכל</button>
       <button type="button" class="tag-btn" data-tag="ברית מילה">ברית מילה</button>
       <button type="button" class="tag-btn" data-tag='ריי"צ'>ריי"צ</button>
@@ -98,10 +52,7 @@
     <p class="count" id="count"></p>
     <div id="list"></div>
   </main>
-  <footer>
-    מקורות חב"ד ·
-    <a href="https://github.com/EFI770/chabad-simcha-mekabatz" target="_blank" rel="noopener">GitHub</a>
-  </footer>
+  <footer>מקורות חב"ד · <a href="https://github.com/EFI770/chabad-simcha-mekabatz" target="_blank" rel="noopener">GitHub</a></footer>
   <div class="toast" id="toast">הועתק</div>
   <script>
     let stories = [];
@@ -110,6 +61,11 @@
       try {
         const res = await fetch("stories.json");
         stories = await res.json();
+        try {
+          const res2 = await fetch("stories-extra.json");
+          const extra = await res2.json();
+          if (Array.isArray(extra)) stories = stories.concat(extra);
+        } catch (e2) {}
       } catch (e) {
         document.getElementById("list").innerHTML = "<p>לא ניתן לטעון את הסיפורים.</p>";
         return;
@@ -131,40 +87,33 @@
       document.getElementById("count").textContent = items.length + " סיפורים";
       const list = document.getElementById("list");
       list.innerHTML = items.map(s => {
-        const shareText = encodeURIComponent("*" + s.title + "*\n\n" + s.text + "\n\n— " + (s.source || "מקורות חב\"ד"));
+        const shareText = encodeURIComponent("*" + s.title + "*\n\n" + s.text + "\n\n— " + (s.source || ""));
         const wa = "https://wa.me/?text=" + shareText;
         const chips = (s.tags || []).map(t => "<span class=\"chip\">" + escapeHtml(t) + "</span>").join("");
         const hasSrc = s.source_url && String(s.source_url).trim();
         const srcBtn = hasSrc
           ? "<a class=\"action src\" href=\"" + escapeHtml(s.source_url) + "\" target=\"_blank\" rel=\"noopener\">למקור</a>"
           : "<button type=\"button\" class=\"action src disabled\" disabled>למקור</button>";
-        return "<article class=\"card\" data-id=\"" + s.id + "\"><h2>" + escapeHtml(s.title) + "</h2><div class=\"meta\">" + escapeHtml(s.source || "") + "</div><div class=\"tags\">" + chips + "</div><div class=\"body\">" + escapeHtml(s.text) + "</div><div class=\"actions\"><button type=\"button\" class=\"action wa\" data-wa=\"" + wa + "\">וואטסאפ</button><button type=\"button\" class=\"action copy\" data-copy-id=\"" + s.id + "\">העתקה</button>" + srcBtn + "</div></article>";
+        return "<article class=\"card\"><h2>" + escapeHtml(s.title) + "</h2><div class=\"meta\">" + escapeHtml(s.source || "") + "</div><div class=\"tags\">" + chips + "</div><div class=\"body\">" + escapeHtml(s.text) + "</div><div class=\"actions\"><button type=\"button\" class=\"action wa\" data-wa=\"" + wa + "\">וואטסאפ</button><button type=\"button\" class=\"action copy\" data-copy-id=\"" + s.id + "\">העתקה</button>" + srcBtn + "</div></article>";
       }).join("") || "<p>לא נמצאו סיפורים.</p>";
-      list.querySelectorAll("[data-wa]").forEach(btn => {
-        btn.addEventListener("click", () => { window.open(btn.getAttribute("data-wa"), "_blank"); });
-      });
+      list.querySelectorAll("[data-wa]").forEach(btn => btn.addEventListener("click", () => window.open(btn.getAttribute("data-wa"), "_blank")));
       list.querySelectorAll("[data-copy-id]").forEach(btn => {
         btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-copy-id");
-          const s = stories.find(x => x.id === id);
+          const s = stories.find(x => x.id === btn.getAttribute("data-copy-id"));
           if (!s) return;
-          const t = s.title + "\n\n" + s.text + "\n\n— " + (s.source || "") + (s.source_url ? "\n" + s.source_url : "");
           try {
-            await navigator.clipboard.writeText(t);
-            showToast("הועתק ללוח");
-          } catch (e) {
-            showToast("לא ניתן להעתיק");
-          }
+            await navigator.clipboard.writeText(s.title + "\n\n" + s.text + "\n\n— " + (s.source || ""));
+            showToast("הועתק");
+          } catch (e) { showToast("שגיאה"); }
         });
       });
     }
     function escapeHtml(str) {
-      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
     }
     function showToast(msg) {
       const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.add("show");
+      el.textContent = msg; el.classList.add("show");
       setTimeout(() => el.classList.remove("show"), 1800);
     }
     document.getElementById("q").addEventListener("input", render);
