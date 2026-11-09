@@ -2,14 +2,14 @@
 const stories=window.STORIES||[];
 const tanyaChapters=window.TANYA||[];
 const tanyaAliases=window.TANYA_ALIASES||{};
-const tanyaStories=tanyaChapters.flatMap(c=>c.stories.map(s=>({...s,categories:[s.chapter]})));
+const tanyaStories=tanyaChapters.flatMap(c=>c.stories.map(s=>({...s,categories:s.chapters||[s.chapter]})));
 const allStories=[...stories,...tanyaStories];
 const $=q=>document.querySelector(q);
 const escapeHtml=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const normalize=x=>String(x).normalize('NFKD').replace(/[\u0591-\u05C7]/g,'').replace(/["'״׳]/g,'').toLowerCase();
 const categoryOrder=['חסידות וחב״ד','שמחה','אמונה וביטחון','אהבת ישראל','צדקה וחסד','שליחות וקירוב','חינוך ומשפחה','תורה ולימוד','שבת וחגים','תפילה','הכנסת אורחים','יושר ואחריות','מסירות נפש','חז״ל','סיפורי התנ״ך'];
 let section='chabad',active='',savedOnly=false,favorites=new Set(),current=null,previousFocus=null,toastTimer;
-try{const stored=JSON.parse(localStorage.getItem('chabad-story-favorites')||'[]');if(Array.isArray(stored))favorites=new Set(stored.filter(id=>allStories.some(s=>s.id===id)));}catch(e){}
+try{const stored=JSON.parse(localStorage.getItem('chabad-story-favorites')||'[]');if(Array.isArray(stored))favorites=new Set(stored.map(id=>tanyaAliases[id]||id).filter(id=>allStories.some(s=>s.id===id)));}catch(e){}
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600);}
 function save(){try{localStorage.setItem('chabad-story-favorites',JSON.stringify([...favorites]));}catch(e){toast('השמירה זמינה כרגע רק עד סגירת הדף');}}
 function toggleSaved(id){favorites.has(id)?favorites.delete(id):favorites.add(id);save();render();if(current===id)updateBookmark();}
@@ -33,7 +33,7 @@ function render(){
 }
 function setSection(sec){if(section===sec)return;section=sec;active='';savedOnly=false;render();}
 function updateBookmark(){const holder=$('#reader-bookmark');if(holder){const s=allStories.find(x=>x.id===current);if(s)holder.innerHTML=bookmark(s);}}
-function openStory(id,fromHash=false){let s=allStories.find(x=>x.id===id);if(!s&&tanyaAliases[id]){id=tanyaAliases[id];s=allStories.find(x=>x.id===id);}if(!s){if(fromHash)toast('הקישור אינו תואם לסיפור בספרייה');return;}previousFocus=document.activeElement;current=id;
+function openStory(id,fromHash=false){let s=allStories.find(x=>x.id===id);while(!s&&tanyaAliases[id]){id=tanyaAliases[id];s=allStories.find(x=>x.id===id);}if(!s){if(fromHash)toast('הקישור אינו תואם לסיפור בספרייה');return;}previousFocus=document.activeElement;current=id;
  $('#reader-content').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><span class="reader-label">${s.categories.map(escapeHtml).join(' · ')}</span><span id="reader-bookmark">${bookmark(s)}</span></div><h2 id="story-title" class="reader-title">${escapeHtml(s.title)}</h2><p class="reader-info">${escapeHtml(s.kind)}</p><div class="reader-body">${escapeHtml(s.text)}</div>${s.lesson?`<section class="thought"><h3>נקודה למחשבה · הצעת עריכה</h3><p>${escapeHtml(s.lesson)}</p></section>`: ''}<section class="source-box"><strong>המקור לסיפור</strong>${escapeHtml(s.source)}${s.source_note?`<p>${escapeHtml(s.source_note)}</p>`:''}<br><a href="${escapeHtml(s.source_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.source_link_label||'פתיחת המקור המלא ↗')}</a></section><div class="reader-actions"><a class="wa" href="${escapeHtml(s.whatsapp)}" target="_blank" rel="noopener noreferrer">שיתוף קישור בוואטסאפ ↗</a><button data-copy="${s.id}">העתקת הסיפור והמקור</button><button data-link="${s.id}">העתקת קישור</button></div><p class="share-note">וואטסאפ: קישור לסיפור ולמקור. העתקה: הטקסט המלא עם הייחוס. נקודת המחשבה אינה חלק מהטקסט המועתק.</p>`;
  if(!$('#reader').open)$('#reader').showModal();$('#reader').scrollTop=0;$('#close-reader').focus();document.body.style.overflow='hidden';if(!fromHash)history.replaceState(null,'','#story='+encodeURIComponent(id));
 }
@@ -46,7 +46,7 @@ $('#search').addEventListener('input',render);$('#clear-search').addEventListene
 function route(){if(location.hash.startsWith('#story=')){let id;try{id=decodeURIComponent(location.hash.slice(7));}catch(e){return;}openStory(id,true);}}
 // background niggun (ז'עבינער הארץ, באדיבות חב"דפדיה) — low volume, starts on user tap
 (function(){const a=$('#bgmusic'),btn=$('#music-toggle');if(!a||!btn)return;a.volume=0.2;let on=false;
- btn.addEventListener('click',()=>{if(on){a.pause();}else{a.play().catch(()=>{toast('הדפדפן חסם את הניגון — נסו לחיצה נוספת');});}on=!on;btn.setAttribute('aria-pressed',on);btn.querySelector('span').textContent=on?'♪ ניגון ברקע: מושמע':'♪ ניגון ברקע: ז׳עבינער הארץ';});
+ btn.addEventListener('click',()=>{if(on){a.pause();}else{a.play().catch(()=>{on=false;btn.setAttribute('aria-pressed','false');btn.querySelector('span').textContent='♪ הפעלת ניגון ברקע';toast('הניגון לא התחיל. נסו לחיצה נוספת');});}on=!on;btn.setAttribute('aria-pressed',on);btn.querySelector('span').textContent=on?'♪ ניגון ברקע: מושמע':'♪ ניגון ברקע: ז׳עבינער הארץ';});
  a.addEventListener('pause',()=>{on=false;btn.setAttribute('aria-pressed','false');btn.querySelector('span').textContent='♪ ניגון ברקע: ז׳עבינער הארץ';});
  a.addEventListener('play',()=>{on=true;btn.setAttribute('aria-pressed','true');btn.querySelector('span').textContent='♪ ניגון ברקע: מושמע';});
 })();
