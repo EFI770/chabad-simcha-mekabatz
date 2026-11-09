@@ -20,6 +20,7 @@ function results(){const terms=normalize($('#search').value).trim().split(/\s+/)
 function render(){
  $('#saved-count').textContent=favorites.size;$('#saved').setAttribute('aria-pressed',savedOnly);
  document.querySelectorAll('[data-section]').forEach(b=>{b.classList.toggle('active',b.dataset.section===section);b.setAttribute('aria-pressed',b.dataset.section===section);});
+ $('#tanya-dedication').hidden=section!=='tanya';
  const coll=collection();
  const cats=section==='tanya'?['',...tanyaChapters.map(c=>c.title)]:['',...categoryOrder];
  $('#categories-title').textContent=section==='tanya'?'לפי פרק':'לפי נושא';
