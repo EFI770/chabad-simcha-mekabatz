@@ -2,7 +2,7 @@
 
 Static Hebrew RTL story library. Public URL: https://efi770.github.io/chabad-simcha-mekabatz/
 
-29 source-linked entries across 15 themes. Search, categories, reading dialog, browser-local favorites, copy with attribution/source, and WhatsApp story/source links. No account, backend, paid dependency or subscription. Existing approved Cloudflare analytics preserved unchanged.
+31 source-linked entries across 15 themes. Search, categories, reading dialog, browser-local favorites, copy with attribution/source, and WhatsApp story/source links. No account, backend, paid dependency or subscription. Existing approved Cloudflare analytics preserved unchanged.
 
 ## Content
 `catalog.json` is the canonical content; `catalog-data.js` is its generated browser bundle so initial load does not depend on asynchronous JSON fetch. Every entry includes kind, source, source_url and an independently written text. Chabad article summaries are deliberately short; full original stories are linked. See research/SOURCES.md.
