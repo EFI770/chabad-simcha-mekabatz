@@ -1,132 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>סיפורי שמחה – חב"ד</title>
-  <style>
-    :root { --parchment: #F3EAD6; --ink: #1A1612; --techelet: #2F4D6F; --seal: #7A3333; --card: #FFFEF8; --muted: #5a5348; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: "Segoe UI", "Heebo", Arial, sans-serif; background: var(--parchment); color: var(--ink); line-height: 1.55; min-height: 100dvh; }
-    header { background: var(--techelet); color: #fff; padding: 1rem 1.1rem 1.2rem; position: sticky; top: 0; z-index: 10; }
-    header h1 { margin: 0 0 .35rem; font-size: 1.35rem; }
-    header p { margin: 0; font-size: .9rem; opacity: .92; }
-    .toolbar { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .85rem; }
-    input[type="search"] { flex: 1; min-width: 140px; padding: .55rem .75rem; border: none; border-radius: 8px; font-size: 1rem; direction: rtl; }
-    .tag-btn { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .35rem .7rem; font-size: .85rem; cursor: pointer; }
-    .tag-btn.active { background: #fff; color: var(--techelet); }
-    main { max-width: 720px; margin: 0 auto; padding: 1rem .9rem 5rem; }
-    .count { font-size: .9rem; color: var(--muted); margin: 0 0 .75rem; }
-    .card { background: var(--card); border: 1px solid #e5dcc8; border-radius: 12px; padding: 1rem; margin-bottom: .85rem; }
-    .card h2 { margin: 0 0 .4rem; font-size: 1.08rem; color: var(--seal); }
-    .meta { font-size: .8rem; color: var(--muted); margin-bottom: .55rem; }
-    .body { white-space: pre-wrap; font-size: .98rem; margin-bottom: .85rem; }
-    .tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .75rem; }
-    .chip { background: #ebe3d1; color: var(--techelet); font-size: .75rem; padding: .15rem .5rem; border-radius: 6px; }
-    .actions { display: flex; gap: .45rem; flex-wrap: wrap; }
-    button.action, a.action { flex: 1; min-width: 90px; padding: .55rem; border: none; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
-    .wa { background: #25D366; color: #fff; }
-    .copy { background: var(--techelet); color: #fff; }
-    .src { background: var(--seal); color: #fff; }
-    .src.disabled { background: #b8a99a; pointer-events: none; opacity: .65; }
-    .toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: .55rem 1rem; border-radius: 999px; font-size: .9rem; opacity: 0; transition: opacity .25s; z-index: 20; }
-    .toast.show { opacity: 1; }
-    footer { text-align: center; font-size: .8rem; color: var(--muted); padding: 1rem; }
-    footer a { color: var(--techelet); }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>סיפורים לבית חב״ד | סיפור טוב, בזמן הנכון</title>
+<meta name="description" content="סיפורי חסידות, חז״ל ותנ״ך לבית חב״ד: לפי נושא, עם מקור מדויק, העתקה ושיתוף בוואטסאפ.">
+<meta name="theme-color" content="#183c3e">
+<link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>סיפורי שמחה – חב"ד</h1>
-    <p>מקבץ מקורות על מעלת השמחה · שיתוף בוואטסאפ</p>
-    <div class="toolbar">
-      <input type="search" id="q" placeholder="חיפוש..." autocomplete="off" />
-      <button type="button" class="tag-btn active" data-tag="">הכל</button>
-      <button type="button" class="tag-btn" data-tag="ברית מילה">ברית מילה</button>
-      <button type="button" class="tag-btn" data-tag='ריי"צ'>ריי"צ</button>
-      <button type="button" class="tag-btn" data-tag="צמח צדק">צמח צדק</button>
-      <button type="button" class="tag-btn" data-tag="שמחת תורה">שמחת תורה</button>
-    </div>
-  </header>
-  <main>
-    <p class="count" id="count"></p>
-    <div id="list"></div>
-  </main>
-  <footer>מקורות חב"ד · <a href="https://github.com/EFI770/chabad-simcha-mekabatz" target="_blank" rel="noopener">GitHub</a></footer>
-  <div class="toast" id="toast">הועתק</div>
-  <script>
-    let stories = [];
-    let activeTag = "";
-    async function load() {
-      try {
-        const res = await fetch("stories.json");
-        stories = await res.json();
-        try {
-          const res2 = await fetch("stories-extra.json");
-          const extra = await res2.json();
-          if (Array.isArray(extra)) stories = stories.concat(extra);
-        } catch (e2) {}
-      } catch (e) {
-        document.getElementById("list").innerHTML = "<p>לא ניתן לטעון את הסיפורים.</p>";
-        return;
-      }
-      render();
-    }
-    function filtered() {
-      const q = (document.getElementById("q").value || "").trim().toLowerCase();
-      return stories.filter(s => {
-        const tagOk = !activeTag || (s.tags && s.tags.some(t => t.indexOf(activeTag) !== -1 || t === activeTag));
-        if (!tagOk) return false;
-        if (!q) return true;
-        const hay = (s.title + " " + s.text + " " + (s.tags || []).join(" ") + " " + (s.source || "")).toLowerCase();
-        return hay.indexOf(q) !== -1;
-      });
-    }
-    function render() {
-      const items = filtered();
-      document.getElementById("count").textContent = items.length + " סיפורים";
-      const list = document.getElementById("list");
-      list.innerHTML = items.map(s => {
-        const shareText = encodeURIComponent("*" + s.title + "*\n\n" + s.text + "\n\n— " + (s.source || ""));
-        const wa = "https://wa.me/?text=" + shareText;
-        const chips = (s.tags || []).map(t => "<span class=\"chip\">" + escapeHtml(t) + "</span>").join("");
-        const hasSrc = s.source_url && String(s.source_url).trim();
-        const srcBtn = hasSrc
-          ? "<a class=\"action src\" href=\"" + escapeHtml(s.source_url) + "\" target=\"_blank\" rel=\"noopener\">למקור</a>"
-          : "<button type=\"button\" class=\"action src disabled\" disabled>למקור</button>";
-        return "<article class=\"card\"><h2>" + escapeHtml(s.title) + "</h2><div class=\"meta\">" + escapeHtml(s.source || "") + "</div><div class=\"tags\">" + chips + "</div><div class=\"body\">" + escapeHtml(s.text) + "</div><div class=\"actions\"><button type=\"button\" class=\"action wa\" data-wa=\"" + wa + "\">וואטסאפ</button><button type=\"button\" class=\"action copy\" data-copy-id=\"" + s.id + "\">העתקה</button>" + srcBtn + "</div></article>";
-      }).join("") || "<p>לא נמצאו סיפורים.</p>";
-      list.querySelectorAll("[data-wa]").forEach(btn => btn.addEventListener("click", () => window.open(btn.getAttribute("data-wa"), "_blank")));
-      list.querySelectorAll("[data-copy-id]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const s = stories.find(x => x.id === btn.getAttribute("data-copy-id"));
-          if (!s) return;
-          try {
-            await navigator.clipboard.writeText(s.title + "\n\n" + s.text + "\n\n— " + (s.source || ""));
-            showToast("הועתק");
-          } catch (e) { showToast("שגיאה"); }
-        });
-      });
-    }
-    function escapeHtml(str) {
-      return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-    }
-    function showToast(msg) {
-      const el = document.getElementById("toast");
-      el.textContent = msg; el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 1800);
-    }
-    document.getElementById("q").addEventListener("input", render);
-    document.querySelectorAll(".tag-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeTag = btn.getAttribute("data-tag") || "";
-        render();
-      });
-    });
-    load();
-  </script>
+<a class="skip" href="#library">מעבר לסיפורים</a>
+<header class="top"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">▤</span> סיפורים לבית חב״ד</a><button id="saved" class="quiet" aria-pressed="false">השמורים שלי <span id="saved-count">0</span></button></header>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">להתוועדות · לשיעור · לשולחן שבת</div><h1>סיפור טוב.<br><span>חיבור שנשאר.</span></h1><p>סיפורים שמקרבים לבבות, מעוררים מחשבה<br class="desktop-break"> ונותנים משהו לקחת הביתה.</p><div class="hero-bottom"><span id="total">טוענים את הספרייה…</span><button id="random" class="light-btn">בחרו לי סיפור <span aria-hidden="true">←</span></button></div></div><div class="book-art" aria-hidden="true"><div class="sun"></div><div class="book left"></div><div class="book right"></div><span>לכל מפגש<br>יש סיפור.</span></div></section>
+<main id="library"><section class="search-area"><label for="search">איזה סיפור מחפשים היום?</label><div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="נושא, דמות או מילה מהסיפור…" autocomplete="off"><button id="clear-search" aria-label="ניקוי חיפוש" hidden>×</button></div></section>
+<div class="library-layout"><aside aria-label="קטגוריות סיפורים"><h2>לפי נושא</h2><nav id="categories" aria-label="בחירת קטגוריה"></nav></aside><section class="results" aria-labelledby="result-heading"><div class="results-head"><h2 id="result-heading">כל הסיפורים</h2><span id="count" role="status" aria-live="polite"></span></div><p class="editorial">הסיפורים מסומנים כעיבוד או כתקציר עצמאי, ולא כציטוט. בכל סיפור תמצאו קישור למקור לקריאה ולהשוואה.</p><div id="stories" class="grid"><p>טוענים סיפורים…</p></div><div id="empty" hidden><h3>לא מצאנו סיפור מתאים</h3><p>נסו מילה אחרת או חזרו לכל הספרייה.</p><button class="primary" id="reset">הצגת כל הסיפורים</button></div></section></div>
+<section class="about"><span class="about-mark" aria-hidden="true">✧</span><div><h2>מספרים, ושומרים על המקור.</h2><p>ספרייה לבית חב״ד ולכל מי שרוצה להעביר סיפור הלאה. עיבודים לסיפורי המקורות ותקצירים קצרים לסיפורים מוגנים, עם ייחוס וקישור לקריאה במקור. נקודות המחשבה הן הצעות עריכה, לא חלק מהמקור.</p><p>העתקה כוללת את הסיפור, הייחוס וקישור המקור. שיתוף בוואטסאפ שולח קישור לסיפור ולמקור. לא נשלחת הודעה בלי שבוחרים איש קשר ושולחים בעצמכם.</p><details><summary>מה קרה למקבץ סיפורי השמחה הקודם?</summary><p>40 הרשומות הקודמות נשמרו בגיבוי. רשומות עם ייחוס חסר או כללי לא הועברו אוטומטית לספרייה המאומתת. סיפורים שנמצאו להם מקורות מתאימים נכתבו מחדש כעיבודים או כתקצירים מסומנים.</p></details></div></section>
+</main>
+<footer>סיפורים לבית חב״ד · פתוח לקריאה, בלי הרשמה ובלי תשלום<br><small>השמורים נשמרים רק בדפדפן הזה. לכתבות המקושרות זכויות משלהן; קישור אינו רשות להעתיק את נוסחן המלא.</small></footer>
+<dialog id="reader" aria-labelledby="story-title"><div class="reader-top"><span>סיפורים לבית חב״ד</span><button id="close-reader" aria-label="סגירת הסיפור">×</button></div><div id="reader-content"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><p class="noscript">כדי לחפש ולשתף סיפורים יש להפעיל JavaScript בדפדפן.</p></noscript>
+<script src="catalog-data.js"></script><script src="app.js"></script>
 <!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"8d7ac41306b44802b1cb639770fd8f82"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+</body></html>

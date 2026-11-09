@@ -1,31 +1,14 @@
-# מקבץ מקורות חב"ד על מעלת השמחה
+# סיפורים לבית חב״ד
 
-מקבץ מסודר של מקורות חב"ד אותנטיים על מעלת השמחה + **אפליקציה לשיתוף בוואטסאפ**.
+Static Hebrew RTL story library. Public URL: https://efi770.github.io/chabad-simcha-mekabatz/
 
-## האפליקציה (GitHub Pages – root)
+29 source-linked entries across 15 themes. Search, categories, reading dialog, browser-local favorites, copy with attribution/source, and WhatsApp story/source links. No account, backend, paid dependency or subscription. Existing approved Cloudflare analytics preserved unchanged.
 
-הקבצים `index.html` ו-`stories.json` נמצאים **בשורש** הריפו.
+## Content
+`catalog.json` is the canonical content; `catalog-data.js` is its generated browser bundle so initial load does not depend on asynchronous JSON fetch. Every entry includes kind, source, source_url and an independently written text. Chabad article summaries are deliberately short; full original stories are linked. See research/SOURCES.md.
 
-לאחר הפעלת GitHub Pages (Settings → Pages → Deploy from branch → `main` → **/ (root)**):
+## Preservation
+Previous index + all 40 prior records preserved in archive/2026-11-09/. Original stories.json, stories-extra.json and app/ remain unchanged. Git history provides rollback.
 
-**https://efi770.github.io/chabad-simcha-mekabatz/**
-
-תכונות:
-- חיפוש וסינון לפי תגיות (כולל ברית מילה)
-- כפתור **שליחה בוואטסאפ**
-- כפתור **העתקה**
-- 21 סיפורים (כולל לקוטי דיבורים ואוצר סיפורי חב"ד)
-
-## קבצים
-- `index.html` + `stories.json` – האפליקציה
-- `mekabatz-simcha.md` – מקבץ עם קישורים
-- `sipurim-simcha.md` – סיפורים נרטיביים
-- `app/` – גרסה ישנה (ניתן להתעלם)
-
-## מקורות להרחבה
-- תורת מנחם (HebrewBooks)
-- ספר השיחות / לקוטי דיבורים של הריי"צ
-- אגרות קודש
-- אוצר סיפורי חב"ד (גליצנשטיין)
-
-_עודכן: תשרי תשפ"ו_
+## Build
+No build framework. Keep catalog.json and catalog-data.js in sync. WhatsApp canonical links are precomputed; they send a story/source link, never send a message automatically. Full copy text includes attribution and source but excludes the editorial reflection. Favorites remain on the current browser only.
